@@ -1,0 +1,109 @@
+package chess;
+
+import apcs.Window;
+
+public class NQueens {
+
+	public static final int N = 8;
+	public static final int SIZE = 600;
+
+	public static void main(String[] args) {
+		boolean[][] board = new boolean[N][N];
+		solve(board);
+		draw(board);
+	}
+
+	public static boolean solve(boolean[][] board) {
+		if (solved(board)) {
+			return true;
+		}
+
+		for (int x = 0 ; x < N ; x++) {
+			for (int y = 0 ; y < N ; y++) {
+
+				// If there is no queen, and a queen can be
+				// placed on this square
+				if (! board[x][y] && canPlace(board, x, y)) {
+
+					// make the choice
+					board[x][y] = true;
+
+					if (solve(board)) {
+						return true;
+					}
+
+					// unmake the choice
+					board[x][y] = false;
+				}
+
+			}
+		}
+
+		return false;
+	}
+
+	public static boolean canPlace(boolean[][] board, int x, int y) {
+		for (int i = 0 ; i < N ; i++) {
+			if (board[x][i] || board[i][y]) {
+				return false;
+			}
+		}
+		if(x >= y){
+			int n = x-y;
+			for(int a = n; a < 8-n; a ++) {
+				for(int b = 0; b < 8; b ++){
+					if(board[a][b]){
+						return false;
+					}
+				}
+			}
+		}
+		if(y > x){
+			int n = y-x;
+			for(int a = n; a < 8-n; a ++){
+				for(int b = 0; b < 8; b ++){
+					if(board[b][a]){
+						return false; 
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	public static boolean solved(boolean[][] board) {
+		int count = 0;
+		for (int x = 0 ; x < N ; x++) {
+			for (int y = 0 ; y < N ; y++) {
+				if (board[x][y]) {
+					count++;
+				}
+			}
+		}
+
+		return count == N;
+	}
+
+	private static boolean drawn = false;
+	public static void draw(boolean[][] board) {
+		if (! drawn) {
+			drawn = true;
+			Window.size(SIZE, SIZE);
+			Window.out.font("Arial", SIZE / N - 10);
+			Window.frame();
+		}
+		int size = Window.width() / N;
+		for (int x = 0 ; x < N ; x++) {
+			for (int y = 0 ; y < N ; y++) {
+				Window.out.color((x % 2 == y % 2) ? "tan" : "brown");
+				Window.out.square(x * size + size / 2, y * size + size / 2, size);
+
+				Window.out.color("white");
+				if (board[x][y])
+					Window.out.print("Q", x * size + 5, (y + 1) * size - 15);
+			}
+		}
+		Window.frame();
+	}
+
+}       
